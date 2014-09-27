@@ -1,14 +1,20 @@
 package com.basasi.ma10osaka.pokerface.ui.main;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.basasi.ma10osaka.pokerface.R;
+import com.basasi.ma10osaka.pokerface.model.CaptureImage;
 
 
 public class MainActivity extends Activity {
+    private final static String TAG = MainActivity.class.getSimpleName();
+
+    private CaptureImage mCaptureImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,10 +29,26 @@ public class MainActivity extends Activity {
     }
 
 
-    private void intentToCamera(){
-
+    public void intentToCamera(){
+        mCaptureImage = new CaptureImage(this);
+        mCaptureImage.setPhotoUri();
+        Intent intent = new Intent();
+        intent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.addCategory(Intent.CATEGORY_DEFAULT);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, mCaptureImage.getImageUri());
+        startActivityForResult(intent, CaptureImage.IMAGE_CAPTURE);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == CaptureImage.IMAGE_CAPTURE){
+            if(resultCode == RESULT_OK){
+                //TODO: 写真送信処理ぽよ
+                mCaptureImage.postImage();
+            }
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

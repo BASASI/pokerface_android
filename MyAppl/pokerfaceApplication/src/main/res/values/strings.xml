@@ -4,5 +4,7 @@
     <string name="app_name">PokerFace</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="desc_app">写真撮りたいからボタン押してカメラで撮るんやで</string>
+    <string name="intent_camera">写真を撮る</string>
 
 </resources>
