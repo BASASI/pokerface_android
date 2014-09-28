@@ -30,6 +30,7 @@ public class MultipartRequest extends Request<String> {
 
     @Override
     public String getBodyContentType() {
+        Log.d(TAG, mEntity.getContentType().getValue());
         return mEntity.getContentType().getValue();
     }
 
@@ -47,6 +48,7 @@ public class MultipartRequest extends Request<String> {
     @Override
     protected Response parseNetworkResponse(NetworkResponse networkResponse) {
         String resp = new String(networkResponse.data);
+        Log.d(TAG, resp);
         // JSONObject型のレスポンス
         JSONObject resultJson;
         try {

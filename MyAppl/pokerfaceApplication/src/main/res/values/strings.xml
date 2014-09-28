@@ -6,5 +6,9 @@
     <string name="action_settings">Settings</string>
     <string name="desc_app">写真撮りたいからボタン押してカメラで撮るんやで</string>
     <string name="intent_camera">写真を撮る</string>
+    <string name="api_url">http://eval.api.polestars.jp:8080/webapi/face.do?apiKey=70b82d74f0d3551372a45f4203d42ad8&amp;blinkJudge=0&amp;ageAndgenderJudge=1&amp;angleJudge=0&amp;enjoyJudge=1</string>
+    <string name="login_id_name_api">http://dry-woodland-1649.herokuapp.com/users</string>
+    <string name="ranking_api">http://dry-woodland-1649.herokuapp.com/ranking</string>
+    <string name="card_api">http://dry-woodland-1649.herokuapp.com/cards</string>
 
 </resources>

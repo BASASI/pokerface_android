@@ -7,6 +7,15 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.Volley;
+import com.basasi.ma10osaka.pokerface.R;
+import com.basasi.ma10osaka.pokerface.request.MultipartRequest;
+
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.InputStreamBody;
 
@@ -15,6 +24,8 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CaptureImage {
     private static final String TAG = CaptureImage.class.getSimpleName();
@@ -26,9 +37,11 @@ public class CaptureImage {
     private Uri mImageUri;
     private Context mContext;
     private String requestUrl;
+    private RequestQueue mRequestQueue;
 
     public CaptureImage(Context context){
         mContext = context;
+        mRequestQueue = Volley.newRequestQueue(context);
     }
 
     public void setImageUri(Uri imageUri) {
@@ -79,6 +92,8 @@ public class CaptureImage {
         mImageUri = uri;
     }
 
+
+
     public void postImage(){
         InputStream inputStream = null;
         try{
@@ -88,10 +103,39 @@ public class CaptureImage {
         }
         MultipartEntity entity = new MultipartEntity();
         InputStreamBody streamBody = new InputStreamBody(inputStream, "photo.jpg");
-        entity.addPart("file", streamBody);
+        entity.addPart("inputFile", streamBody);
 
-        Log.d(TAG, inputStream.toString());
+        //Log.d(TAG, inputStream.toString());
 
-        //MultipartRequest request = new MultipartRequest(requestUrl, );
+        requestUrl = mContext.getString(R.string.api_url);
+
+        MultipartRequest request = new MultipartRequest(requestUrl, mResListener, mEListener){
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = super.getHeaders();
+                // Add Http Header
+                Map<String, String> newHeaders = new HashMap<String, String>();
+                newHeaders.putAll(headers);
+                return newHeaders;
+            }
+        };
+        request.setParams(entity);
+        request.setRetryPolicy(new DefaultRetryPolicy(10000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        mRequestQueue.add(request);
+        mRequestQueue.start();
     }
+
+    private Response.Listener<String> mResListener = new Response.Listener<String>() {
+        @Override
+        public void onResponse(String s) {
+            Log.d(TAG, s);
+        }
+    };
+
+    private Response.ErrorListener mEListener = new Response.ErrorListener() {
+        @Override
+        public void onErrorResponse(VolleyError volleyError) {
+            Log.d(TAG,volleyError.toString());
+        }
+    };
 }
