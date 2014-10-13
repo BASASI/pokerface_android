@@ -19,6 +19,8 @@ public class MainFragment extends Fragment {
 
     @InjectView(R.id.btn_intent_camera)
     Button intentCamButton;
+    @InjectView(R.id.btn_deck)
+    Button deckButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -31,5 +33,10 @@ public class MainFragment extends Fragment {
     @OnClick(R.id.btn_intent_camera)
     public void onClickIntentCamButton(){
         ((MainActivity)getActivity()).intentToCamera();
+    }
+
+    @OnClick(R.id.btn_deck)
+    public void transactionDeckFragment() {
+        getFragmentManager().beginTransaction().replace(R.id.container,new DeckFragment()).addToBackStack(null).commit();
     }
 }

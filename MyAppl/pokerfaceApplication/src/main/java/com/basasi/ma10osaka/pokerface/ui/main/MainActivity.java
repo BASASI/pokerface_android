@@ -9,6 +9,7 @@ import android.view.MenuItem;
 
 import com.basasi.ma10osaka.pokerface.R;
 import com.basasi.ma10osaka.pokerface.model.CaptureImage;
+import com.basasi.ma10osaka.pokerface.model.User;
 
 
 public class MainActivity extends Activity {
@@ -20,6 +21,10 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        User user = new User(this);
+        user.setDeviceId();
+        user.login();
 
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()

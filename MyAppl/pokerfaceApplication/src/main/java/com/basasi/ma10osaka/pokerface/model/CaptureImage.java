@@ -7,8 +7,6 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -16,12 +14,10 @@ import com.android.volley.toolbox.Volley;
 import com.basasi.ma10osaka.pokerface.R;
 import com.basasi.ma10osaka.pokerface.request.MultipartRequest;
 
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.InputStreamBody;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -95,40 +91,41 @@ public class CaptureImage {
 
 
     public void postImage(){
-        InputStream inputStream = null;
-        try{
-            inputStream = mContext.getContentResolver().openInputStream(mImageUri);
-        }catch(FileNotFoundException e){
-            e.printStackTrace();
-        }
-        MultipartEntity entity = new MultipartEntity();
-        InputStreamBody streamBody = new InputStreamBody(inputStream, "photo.jpg");
-        entity.addPart("inputFile", streamBody);
+        Map<String, String> stringMap = new HashMap<String, String>();
+        Map<String, File> fileMap = new HashMap<String, File>();
 
-        //Log.d(TAG, inputStream.toString());
+        stringMap.put("card[user_id]",Integer.toString(User.getUserId()));
+        fileMap.put("card[image_url]",new File(mImageUri.getPath()));
+        String url = mContext.getString(R.string.card_api);
 
-        requestUrl = mContext.getString(R.string.api_url);
+        MultipartRequest request = new MultipartRequest(
+                url,
+                mResListener,
+                mEListener,
+                stringMap,
+                fileMap
+        );
 
-        MultipartRequest request = new MultipartRequest(requestUrl, mResListener, mEListener){
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = super.getHeaders();
-                // Add Http Header
-                Map<String, String> newHeaders = new HashMap<String, String>();
-                newHeaders.putAll(headers);
-                return newHeaders;
-            }
-        };
-        request.setParams(entity);
-        request.setRetryPolicy(new DefaultRetryPolicy(10000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         mRequestQueue.add(request);
         mRequestQueue.start();
     }
 
-    private Response.Listener<String> mResListener = new Response.Listener<String>() {
+    private Response.Listener<JSONObject> mResListener = new Response.Listener<JSONObject>() {
         @Override
-        public void onResponse(String s) {
-            Log.d(TAG, s);
+        public void onResponse(JSONObject s) {
+            Log.d(TAG, s.toString());
+            try {
+                JSONObject my = s.getJSONObject("card");
+                Card.my = new Card(my.getString("atk"),my.getString("def"),my.getString("image_url"),my.getString("nickname"));
+                JSONObject supporter = s.getJSONObject("supporter");
+                Card.suppoeter = new Card(supporter.getString("atk"),supporter.getString("def"),supporter.getString("image_url"),supporter.getString("nickname"));
+                JSONObject e1 = s.getJSONArray("enemy").getJSONObject(0);
+                Card.enemy1 = new Card(e1.getString("atk"),e1.getString("def"),e1.getString("image_url"),e1.getString("nickname"));
+                JSONObject e2 = s.getJSONArray("enemy").getJSONObject(0);
+                Card.enemy2 = new Card(e2.getString("atk"),e2.getString("def"),e2.getString("image_url"),e2.getString("nickname"));
+            }catch(JSONException e){
+
+            }
         }
     };
 
