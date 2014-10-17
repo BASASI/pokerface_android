@@ -84,7 +84,7 @@ public class Card {
     public void requestDeck(DeckFragment fragment){
         mFragment = fragment;
         RequestQueue queue = Volley.newRequestQueue(mFragment.getActivity());
-        JsonArrayRequest request = new JsonArrayRequest(mFragment.getActivity().getString(R.string.deck_api)+Integer.toString(User.getUserId()),mListener,mEListener);
+        JsonArrayRequest request = new JsonArrayRequest(mFragment.getActivity().getString(R.string.deck_api)+"?user_id="+Integer.toString(User.getUserId()),mListener,mEListener);
         queue.add(request);
         queue.start();
     }

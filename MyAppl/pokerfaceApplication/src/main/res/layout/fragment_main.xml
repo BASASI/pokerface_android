@@ -11,7 +11,7 @@
 
     <!-- TODO: タイトル部はロゴのImageViewに置き換える可能性有 -->
     <TextView
-        android:text="@string/app_name"
+        android:text="@string/name_ranking"
         android:textSize="26sp"
         android:id="@+id/title"
         android:layout_width="wrap_content"

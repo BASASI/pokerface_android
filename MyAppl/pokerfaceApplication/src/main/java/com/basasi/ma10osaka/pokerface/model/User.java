@@ -159,7 +159,6 @@ public class User {
                 if(jsonObject.get("nickname").equals(null)){
                     inputNickNameWithDialog();
                 }else{
-                    Log.d(TAG,"つらい");
                 }
             }catch(JSONException e){
                 Log.d(TAG, e.toString());

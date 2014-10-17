@@ -7,6 +7,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -18,6 +19,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -32,8 +35,10 @@ public class CaptureImage {
 
     private Uri mImageUri;
     private Context mContext;
-    private String requestUrl;
+    private String mRequestUrl;
     private RequestQueue mRequestQueue;
+
+    private String mPath;
 
     public CaptureImage(Context context){
         mContext = context;
@@ -73,13 +78,13 @@ public class CaptureImage {
         String title = dateFormat.format(today);
         String dirPath = getDirPath();
         String fileName = "pokerface_" + title + ".jpg";
-        String path = dirPath + "/" + fileName;
-        File file = new File(path);
+        mPath = dirPath + "/" + fileName;
+        File file = new File(mPath);
         ContentValues values = new ContentValues();
         values.put(MediaStore.Images.Media.TITLE, title);
         values.put(MediaStore.Images.Media.DISPLAY_NAME, fileName);
         values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
-        values.put(MediaStore.Images.Media.DATA, path);
+        values.put(MediaStore.Images.Media.DATA, mPath);
         values.put(MediaStore.Images.Media.DATE_TAKEN, currentTimeMillis);
         if (file.exists()) {
             values.put(MediaStore.Images.Media.SIZE, file.length());
@@ -92,19 +97,27 @@ public class CaptureImage {
 
     public void postImage(){
         Map<String, String> stringMap = new HashMap<String, String>();
-        Map<String, File> fileMap = new HashMap<String, File>();
+        Map<String, InputStream> fileMap = new HashMap<String, InputStream>();
+
+        InputStream inputStream = null;
+        try{
+            inputStream = mContext.getContentResolver().openInputStream(mImageUri);
+        }catch(FileNotFoundException e){
+            e.printStackTrace();
+        }
 
         stringMap.put("card[user_id]",Integer.toString(User.getUserId()));
-        fileMap.put("card[image_url]",new File(mImageUri.getPath()));
-        String url = mContext.getString(R.string.card_api);
+        fileMap.put("card[image_url]",inputStream);
+        mRequestUrl = mContext.getString(R.string.card_api);
 
         MultipartRequest request = new MultipartRequest(
-                url,
+                mRequestUrl,
                 mResListener,
                 mEListener,
                 stringMap,
                 fileMap
         );
+        request.setRetryPolicy(new DefaultRetryPolicy(10000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         mRequestQueue.add(request);
         mRequestQueue.start();
