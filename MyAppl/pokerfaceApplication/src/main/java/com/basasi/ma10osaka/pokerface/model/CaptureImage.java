@@ -19,6 +19,7 @@ import com.basasi.ma10osaka.pokerface.request.MultipartRequest;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.InputStreamBody;
 import org.apache.http.entity.mime.content.StringBody;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -141,6 +142,18 @@ public class CaptureImage {
         @Override
         public void onResponse(JSONObject s) {
             Log.d(TAG, s.toString());
+            try {
+                JSONObject my = s.getJSONObject("card");
+                Card.my = new Card(my.getString("atk"),my.getString("def"),my.getString("image_url"),my.getString("nickname"));
+                JSONObject supporter = s.getJSONObject("supporter");
+                Card.suppoeter = new Card(supporter.getString("atk"),supporter.getString("def"),supporter.getString("image_url"),supporter.getString("nickname"));
+                JSONObject e1 = s.getJSONArray("enemys").getJSONObject(0);
+                Card.enemy1 = new Card(e1.getString("atk"),e1.getString("def"),e1.getString("image_url"),e1.getString("nickname"));
+                JSONObject e2 = s.getJSONArray("enemys").getJSONObject(0);
+                Card.enemy2 = new Card(e2.getString("atk"),e2.getString("def"),e2.getString("image_url"),e2.getString("nickname"));
+            }catch(JSONException e){
+                Log.d(TAG,e.toString());
+            }
         }
     };
 

@@ -109,7 +109,6 @@ public class User {
             info.put("device_id", User.deviceId);
             info.put("nickname", User.nickName);
             user.put("user", info);
-            Log.d(TAG,user.toString());
         }catch(JSONException e){
             Log.d(TAG,e.toString());
         }
@@ -151,15 +150,13 @@ public class User {
     private Response.Listener<JSONObject> mLoginListener = new Response.Listener<JSONObject>() {
         @Override
         public void onResponse(JSONObject jsonObject) {
-            Log.d(TAG,jsonObject.toString());
             waitDialog.dismiss();
+            Log.d(TAG,jsonObject.toString());
             try{
                 userId = jsonObject.getInt("id");
-                Log.d(TAG,jsonObject.get("nickname").toString());
                 if(jsonObject.get("nickname").equals(null)){
                     inputNickNameWithDialog();
                 }else{
-                    Log.d(TAG,"つらい");
                 }
             }catch(JSONException e){
                 Log.d(TAG, e.toString());

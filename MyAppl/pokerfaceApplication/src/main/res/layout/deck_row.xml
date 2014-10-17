@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical" android:layout_width="match_parent"
+              android:padding="8dp" android:layout_height="wrap_content">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:orientation="vertical" android:layout_width="match_parent"
+                    android:padding="10dp" android:layout_height="wrap_content" android:background="#EEE">
+
+        <ImageView
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:id="@+id/card_image"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="攻撃力：3000"
+            android:layout_marginLeft="10dp"
+            android:textSize="20sp"
+            android:id="@+id/card_atk"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/card_image"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="防御力：2000"
+            android:layout_marginLeft="10dp"
+            android:textSize="20sp"
+            android:id="@+id/card_def"
+            android:layout_alignBottom="@+id/card_image"
+            android:layout_toRightOf="@+id/card_image"/>
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#CCCCCC" />
+
+
+</LinearLayout>
