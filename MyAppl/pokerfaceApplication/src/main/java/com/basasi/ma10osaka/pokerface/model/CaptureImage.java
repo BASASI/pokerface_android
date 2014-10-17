@@ -18,10 +18,12 @@ import com.basasi.ma10osaka.pokerface.request.MultipartRequest;
 
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.InputStreamBody;
+import org.apache.http.entity.mime.content.StringBody;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -103,11 +105,20 @@ public class CaptureImage {
         }
         MultipartEntity entity = new MultipartEntity();
         InputStreamBody streamBody = new InputStreamBody(inputStream, "photo.jpg");
-        entity.addPart("inputFile", streamBody);
+        entity.addPart("card[image_url]", streamBody);
+        StringBody stringBody = null;
+
+        try{
+            stringBody = new StringBody(Integer.toString(User.getUserId()));
+        }catch (UnsupportedEncodingException e){
+           Log.d(TAG, e.toString());
+        }
+
+        entity.addPart("card[user_id]", stringBody);
 
         //Log.d(TAG, inputStream.toString());
 
-        requestUrl = mContext.getString(R.string.api_url);
+        requestUrl = mContext.getString(R.string.card_api);
 
         MultipartRequest request = new MultipartRequest(requestUrl, mResListener, mEListener){
             @Override
