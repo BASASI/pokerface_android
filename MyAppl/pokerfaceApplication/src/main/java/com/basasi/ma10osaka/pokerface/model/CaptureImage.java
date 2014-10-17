@@ -19,6 +19,7 @@ import com.basasi.ma10osaka.pokerface.request.MultipartRequest;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.InputStreamBody;
 import org.apache.http.entity.mime.content.StringBody;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -136,10 +137,10 @@ public class CaptureImage {
         mRequestQueue.start();
     }
 
-    private Response.Listener<String> mResListener = new Response.Listener<String>() {
+    private Response.Listener<JSONObject> mResListener = new Response.Listener<JSONObject>() {
         @Override
-        public void onResponse(String s) {
-            Log.d(TAG, s);
+        public void onResponse(JSONObject s) {
+            Log.d(TAG, s.toString());
         }
     };
 

@@ -13,7 +13,7 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-public class MultipartRequest extends Request<String> {
+public class MultipartRequest extends Request<JSONObject> {
     private final static String TAG = MultipartRequest.class.getSimpleName();
 
     private final Response.Listener mListener;
@@ -61,8 +61,8 @@ public class MultipartRequest extends Request<String> {
     }
 
     @Override
-    protected void deliverResponse(String response) {
-        Log.d(TAG,response);
+    protected void deliverResponse(JSONObject response) {
+        Log.d(TAG,response.toString());
     }
 
 
