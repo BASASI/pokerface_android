@@ -2,6 +2,7 @@
 <resources>
 
     <string name="app_name">PokerFace</string>
+    <string name="rank">Ranking</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="desc_app">写真撮りたいからボタン押してカメラで撮るんやで</string>
@@ -19,5 +20,8 @@
     <string name="ranking_api">http://dry-woodland-1649.herokuapp.com/ranking.json</string>
     <string name="card_api">http://dry-woodland-1649.herokuapp.com/cards.json</string>
     <string name="doing_login">ログインしています…</string>
+    <string name="tap_start">タップしてスタート</string>
+    <string name="start_battle">バトルする！</string>
+    <string name="doing_upload">アップロードしています．しばらくお待ち下さい…</string>
 
 </resources>

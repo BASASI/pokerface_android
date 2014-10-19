@@ -31,9 +31,10 @@ public class Card {
     public static List<Card> cardList = new ArrayList<Card>();
 
     public static Card my;
-    public static Card suppoeter;
+    public static Card supporter;
     public static Card enemy1;
     public static Card enemy2;
+    public static int point;
 
 
     public Card() {

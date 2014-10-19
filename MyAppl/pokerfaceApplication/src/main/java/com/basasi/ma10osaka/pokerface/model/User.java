@@ -16,6 +16,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.basasi.ma10osaka.pokerface.R;
+import com.basasi.ma10osaka.pokerface.ui.main.TopFragment;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,6 +32,8 @@ public class User {
     private static int userId;
     private static String nickName;
     private Context mContext;
+
+    private TopFragment mFragment;
 
     private static ProgressDialog waitDialog;
 
@@ -62,7 +65,8 @@ public class User {
         return userId;
     }
 
-    public void login(){
+    public void login(TopFragment fragment){
+        mFragment = fragment;
         waitDialog = new ProgressDialog(mContext);
         waitDialog.setMessage(mContext.getString(R.string.doing_login));
         waitDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -125,8 +129,6 @@ public class User {
                 newHeaders.putAll(headers);
                 newHeaders.put("Content-Type","application/json");
                 newHeaders.put("Accept", "application/json,text/html");
-                //newHeaders.put("device_id", deviceId);
-                //newHeaders.put("nickname", nickName);
                 return newHeaders;
             }
         };
@@ -157,6 +159,7 @@ public class User {
                 if(jsonObject.get("nickname").equals(null)){
                     inputNickNameWithDialog();
                 }else{
+                    mFragment.transactionMainFragment();
                 }
             }catch(JSONException e){
                 Log.d(TAG, e.toString());
@@ -170,6 +173,7 @@ public class User {
         public void onResponse(JSONObject jsonObject) {
             Log.d(TAG,jsonObject.toString());
             waitDialog.dismiss();
+            mFragment.transactionMainFragment();
         }
     };
 

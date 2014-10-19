@@ -48,7 +48,6 @@ public class MultipartRequest extends Request<JSONObject> {
     @Override
     protected Response parseNetworkResponse(NetworkResponse networkResponse) {
         String resp = new String(networkResponse.data);
-        Log.d(TAG, resp);
         // JSONObject型のレスポンス
         JSONObject resultJson;
         try {
@@ -62,7 +61,7 @@ public class MultipartRequest extends Request<JSONObject> {
 
     @Override
     protected void deliverResponse(JSONObject response) {
-        Log.d(TAG,response.toString());
+        mListener.onResponse(response);
     }
 
 

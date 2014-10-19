@@ -11,7 +11,7 @@ import com.basasi.ma10osaka.pokerface.R;
 
 import java.util.List;
 
-class NavigationViewHolder {
+class RankingViewHolder {
     TextView rankView;
     TextView nameView;
     TextView scoreView;
@@ -30,11 +30,11 @@ public class RankingListViewAdapter extends ArrayAdapter<RankingDataHolder> {
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent){
-        NavigationViewHolder holder;
+        RankingViewHolder holder;
 
         if (convertView == null) {
             convertView = mLayoutInflater.inflate(R.layout.rank_row, parent, false);
-            holder = new NavigationViewHolder();
+            holder = new RankingViewHolder();
             holder.rankView = (TextView) convertView.findViewById(R.id.rank_num);
             holder.nameView = (TextView) convertView.findViewById(R.id.rank_name);
             holder.scoreView = (TextView) convertView.findViewById(R.id.rank_score);
@@ -42,11 +42,11 @@ public class RankingListViewAdapter extends ArrayAdapter<RankingDataHolder> {
 
             convertView.setTag(holder);
         } else {
-            holder = (NavigationViewHolder) convertView.getTag();
+            holder = (RankingViewHolder) convertView.getTag();
         }
 
         RankingDataHolder data = getItem(position);
-        holder.rankView.setText(data.mScore);
+        holder.rankView.setText(data.mRank);
         holder.nameView.setText(data.mName);
         holder.scoreView.setText(data.mScore);
 

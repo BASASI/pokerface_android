@@ -6,8 +6,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ListView;
 
 import com.basasi.ma10osaka.pokerface.R;
+import com.basasi.ma10osaka.pokerface.model.Ranking;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -17,6 +19,8 @@ public class MainFragment extends Fragment {
     private static final String TAG = MainFragment.class.getSimpleName();
     private final MainFragment self = this;
 
+    @InjectView(R.id.rank_list)
+    ListView rankingListView;
     @InjectView(R.id.btn_intent_camera)
     Button intentCamButton;
     @InjectView(R.id.btn_deck)
@@ -26,6 +30,9 @@ public class MainFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main,container,false);
         ButterKnife.inject(this, view);
+
+        Ranking ranking = new Ranking(getActivity(), rankingListView);
+        ranking.requestRanking();
 
         return view;
     }

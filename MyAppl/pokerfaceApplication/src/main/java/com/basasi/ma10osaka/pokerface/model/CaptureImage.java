@@ -1,11 +1,12 @@
 package com.basasi.ma10osaka.pokerface.model;
 
+import android.app.ProgressDialog;
 import android.content.ContentValues;
-import android.content.Context;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -15,6 +16,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.basasi.ma10osaka.pokerface.R;
 import com.basasi.ma10osaka.pokerface.request.MultipartRequest;
+import com.basasi.ma10osaka.pokerface.ui.main.MainActivity;
 
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.InputStreamBody;
@@ -39,13 +41,16 @@ public class CaptureImage {
     public static final String KEY_IMAGE_URI = "KEY_IMAGE_URI";
 
     private Uri mImageUri;
-    private Context mContext;
+    private MainActivity mActivity;
     private String requestUrl;
     private RequestQueue mRequestQueue;
 
-    public CaptureImage(Context context){
-        mContext = context;
-        mRequestQueue = Volley.newRequestQueue(context);
+    private static ProgressDialog waitDialog;
+
+
+    public CaptureImage(MainActivity activity){
+        mActivity = activity;
+        mRequestQueue = Volley.newRequestQueue(activity);
     }
 
     public void setImageUri(Uri imageUri) {
@@ -61,7 +66,7 @@ public class CaptureImage {
         File photoDir = null;
         File extStorageDir = Environment.getExternalStorageDirectory();
         if (extStorageDir.canWrite()) {
-            photoDir = new File(extStorageDir.getPath() + "/" + mContext.getPackageName());
+            photoDir = new File(extStorageDir.getPath() + "/" + mActivity.getPackageName());
         }
         if (photoDir != null) {
             if (!photoDir.exists()) {
@@ -92,16 +97,20 @@ public class CaptureImage {
         if (file.exists()) {
             values.put(MediaStore.Images.Media.SIZE, file.length());
         }
-        Uri uri = mContext.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+        Uri uri = mActivity.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
         mImageUri = uri;
     }
 
 
 
     public void postImage(){
+        waitDialog = new ProgressDialog(mActivity);
+        waitDialog.setMessage(mActivity.getString(R.string.doing_upload));
+        waitDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        waitDialog.show();
         InputStream inputStream = null;
         try{
-            inputStream = mContext.getContentResolver().openInputStream(mImageUri);
+            inputStream = mActivity.getContentResolver().openInputStream(mImageUri);
         }catch(FileNotFoundException e){
             e.printStackTrace();
         }
@@ -120,7 +129,7 @@ public class CaptureImage {
 
         //Log.d(TAG, inputStream.toString());
 
-        requestUrl = mContext.getString(R.string.card_api);
+        requestUrl = mActivity.getString(R.string.card_api);
 
         MultipartRequest request = new MultipartRequest(requestUrl, mResListener, mEListener){
             @Override
@@ -141,16 +150,20 @@ public class CaptureImage {
     private Response.Listener<JSONObject> mResListener = new Response.Listener<JSONObject>() {
         @Override
         public void onResponse(JSONObject s) {
+            waitDialog.dismiss();
             Log.d(TAG, s.toString());
             try {
                 JSONObject my = s.getJSONObject("card");
-                Card.my = new Card(my.getString("atk"),my.getString("def"),my.getString("image_url"),my.getString("nickname"));
+                Card.my = new Card(my.getString("offense"),my.getString("defense"),my.getString("image_url"),my.getString("nickname"));
                 JSONObject supporter = s.getJSONObject("supporter");
-                Card.suppoeter = new Card(supporter.getString("atk"),supporter.getString("def"),supporter.getString("image_url"),supporter.getString("nickname"));
+                Card.supporter = new Card(supporter.getString("offense"),supporter.getString("defense"),supporter.getString("image_url"),supporter.getString("nickname"));
                 JSONObject e1 = s.getJSONArray("enemys").getJSONObject(0);
-                Card.enemy1 = new Card(e1.getString("atk"),e1.getString("def"),e1.getString("image_url"),e1.getString("nickname"));
+                Card.enemy1 = new Card(e1.getString("offense"),e1.getString("defense"),e1.getString("image_url"),e1.getString("nickname"));
                 JSONObject e2 = s.getJSONArray("enemys").getJSONObject(0);
-                Card.enemy2 = new Card(e2.getString("atk"),e2.getString("def"),e2.getString("image_url"),e2.getString("nickname"));
+                Card.enemy2 = new Card(e2.getString("offense"),e2.getString("defense"),e2.getString("image_url"),e2.getString("nickname"));
+                Card.point = s.getInt("score");
+
+                mActivity.transactionGetCardFragment();
             }catch(JSONException e){
                 Log.d(TAG,e.toString());
             }
@@ -161,6 +174,8 @@ public class CaptureImage {
         @Override
         public void onErrorResponse(VolleyError volleyError) {
             Log.d(TAG,volleyError.toString());
+            waitDialog.dismiss();
+            Toast.makeText(mActivity,"画像送信に失敗しました",Toast.LENGTH_LONG).show();
         }
     };
 }

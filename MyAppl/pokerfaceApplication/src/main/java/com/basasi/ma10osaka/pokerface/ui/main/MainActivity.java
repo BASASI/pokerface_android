@@ -9,7 +9,6 @@ import android.view.MenuItem;
 
 import com.basasi.ma10osaka.pokerface.R;
 import com.basasi.ma10osaka.pokerface.model.CaptureImage;
-import com.basasi.ma10osaka.pokerface.model.User;
 
 
 public class MainActivity extends Activity {
@@ -22,13 +21,9 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        User user = new User(this);
-        user.setDeviceId();
-        user.login();
-
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
-                    .add(R.id.container, new MainFragment())
+                    .add(R.id.container, new TopFragment())
                     .commit();
         }
     }
@@ -72,6 +67,10 @@ public class MainActivity extends Activity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void transactionGetCardFragment() {
+        getFragmentManager().beginTransaction().replace(R.id.container,new GetCardFragment()).commit();
     }
 
 }
